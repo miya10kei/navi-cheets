@@ -1,4 +1,9 @@
-% aws
+% aws, sts
 
-# Get caller identity
+# Get Caller Identity
 aws sts get-caller-identity
+
+% aws, ssm
+
+# Start Session
+aws ssm start-session --target $(aws ec2 describe-instances --output=json --query 'Reservations[].Instances[].{InstanceId: InstanceId, State: State.Name, Name: Tags[?Key==`Name`].Value|[0]}' | jq -r '.[] | [.Name, .InstanceId, .State] | @tsv' | sort | column -t | fzf | awk '{print($2)}')
